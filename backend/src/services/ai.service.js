@@ -76,12 +76,6 @@ async function generatePdfFromHtml(htmlContent) {
         ]
     }
 
-    try {
-        launchOptions.executablePath = puppeteer.executablePath()
-    } catch (e) {
-        console.log("Using default puppeteer executable path")
-    }
-
     const browser = await puppeteer.launch(launchOptions)
     try {
         const page = await browser.newPage()
