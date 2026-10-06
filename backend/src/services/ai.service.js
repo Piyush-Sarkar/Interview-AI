@@ -63,7 +63,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch({
+    const launchOptions = {
         headless: "new",
         args: [
             "--no-sandbox",
@@ -74,7 +74,15 @@ async function generatePdfFromHtml(htmlContent) {
             "--no-zygote",
             "--single-process"
         ]
-    })
+    }
+
+    try {
+        launchOptions.executablePath = puppeteer.executablePath()
+    } catch (e) {
+        console.log("Using default puppeteer executable path")
+    }
+
+    const browser = await puppeteer.launch(launchOptions)
     try {
         const page = await browser.newPage()
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
@@ -100,6 +108,9 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
         html: z.string().describe("The HTML content of the resume which can be converted to PDF using any library like puppeteer")
     })
 
+    const responseSchema = z.toJSONSchema(resumePdfSchema)
+    delete responseSchema.$schema
+
     const prompt = `Generate resume for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
@@ -119,7 +130,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: z.toJSONSchema(resumePdfSchema)
+            responseSchema
         }
     })
 

@@ -4,7 +4,7 @@
   "description": "An AI-powered full-stack interview preparation platform that analyzes your resume against a job description and generates a personalized interview strategy—complete with questions, answers, skill-gap analysis, and a 7-day preparation plan. It also includes an AI-powered resume generation feature to help create optimized, job-specific resumes.",
   "main": "index.js",
   "scripts": {
-    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+    "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend && cd backend && npx puppeteer browsers install chrome",
     "start": "npm start --prefix backend"
   },
   "repository": {
