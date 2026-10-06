@@ -1,414 +1,269 @@
-# Interview-AI
+# Interview AI ⚡
 
-An AI-powered full-stack interview preparation platform that analyzes your resume against a job description and generates a personalized interview strategy—complete with questions, answers, skill-gap analysis, and a 7-day preparation plan. It also includes an AI-powered resume generation feature to help create optimized, job-specific resumes.
+<p align="left">
+  <a href="https://interview-ai-07n8.onrender.com"><img src="https://img.shields.io/badge/Demo-Live%20on%20Render-brightgreen?style=flat-square&logo=render" alt="Live Demo" /></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react" alt="React" /></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-Express%205-339933?style=flat-square&logo=node.js" alt="Node.js" /></a>
+  <a href="https://aistudio.google.com/"><img src="https://img.shields.io/badge/Google%20Gemini-GenAI%20SDK-4285F4?style=flat-square&logo=google" alt="Google Gemini" /></a>
+  <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb" alt="MongoDB" /></a>
+</p>
 
-## Table of Contents
+An AI-powered full-stack interview preparation platform that analyzes your resume against a target job description to generate a personalized interview strategy—complete with question-answer preparation, intent breakdowns, skill-gap analysis, and a structured 7-day action plan. It also includes an AI-powered resume builder that generates job-tailored, ATS-friendly resume PDFs.
+
+🌐 **Live Demo:** [https://interview-ai-07n8.onrender.com](https://interview-ai-07n8.onrender.com)
+
+---
+
+## 📑 Table of Contents
 
 - [Overview](#overview)
+- [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
+- [Project Architecture](#project-architecture)
+- [Getting Started Locally](#getting-started-locally)
+  - [Prerequisites](#prerequisites)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
+- [Deployment (Render)](#deployment-render)
 - [API Reference](#api-reference)
 - [Application Flow](#application-flow)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
-- [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 - [License](#license)
-- [Support](#support)
 
 ---
 
-## Overview
+## 💡 Overview
 
-Interview-AI helps job seekers prepare smarter for interviews by combining resume parsing, job description analysis, and Google Gemini AI. Given a resume and a target job description, the app generates:
+Preparing for technical and behavioral interviews can be overwhelming without tailored feedback. **Interview AI** leverages **Google Gemini AI** to bridge the gap between candidate resumes and specific job requirements:
 
-- A **match score** (0–100) between your profile and the job
-- **4–5 technical interview questions** with the interviewer's intent and ideal answers
-- **2–3 behavioral interview questions** with context and guidance
-- A list of **skill gaps** with severity ratings (`low` / `medium` / `high`)
-- A **7-day structured preparation plan** with daily focus areas and tasks
-- An AI-generated, **ATS-friendly resume PDF** tailored to the target job description
+- 🎯 **Match Score:** Calculates a 0–100% compatibility rating between your profile and target job.
+- 💻 **Technical Questions:** Generates 4–5 role-specific questions with interviewer intent and ideal responses.
+- 🤝 **Behavioral Questions:** Generates 2–3 situational/behavioral questions with structured answer guidelines.
+- ⚠️ **Skill Gap Analysis:** Highlights missing competencies rated by severity (`low`, `medium`, `high`).
+- 📅 **7-Day Preparation Roadmap:** Delivers a day-by-day study schedule with actionable focus areas.
+- 📄 **ATS Resume Generator:** Uses Gemini & Puppeteer to dynamically create a tailored, downloadable A4 PDF resume.
 
 ---
 
-## Tech Stack
+## ✨ Key Features
 
-### Backend
+### 🔐 Authentication & Session Security
 
-| Technology               | Version   | Purpose                                       |
-| ------------------------ | --------- | --------------------------------------------- |
-| Node.js + Express        | 5.x       | REST API server                               |
-| MongoDB + Mongoose       | 9.x       | Database & ODM                                |
-| JWT + cookie-parser      | —        | Stateless auth with HTTP-only cookie sessions |
-| bcryptjs                 | 3.x       | Password hashing                              |
-| Multer                   | 2.x       | Resume PDF file uploads                       |
-| pdf-parse                | 2.x       | PDF text extraction                           |
-| `@google/genai`        | 2.x       | Google Gemini AI integration                  |
-| Zod + zod-to-json-schema | 4.x / 3.x | Schema validation & structured AI output      |
-| Puppeteer                | 25.x      | HTML-to-PDF resume rendering                  |
-| nodemon                  | —        | Dev server auto-restart                       |
+- User registration and login with bcrypt-hashed passwords.
+- Secure, stateless JWT authentication stored in **HTTP-only cookies**.
+- Server-side token blacklisting on logout to prevent replay attacks.
+- Frontend route guards (`<Protected>`) with persistent session restoration.
+
+### 📋 Intelligent Interview Reports
+
+- Resume parsing via `pdf-parse` (supports file upload or quick self-description).
+- Schema-validated output using **Zod** and Google Gen AI SDK.
+- Persistent report storage in MongoDB Atlas linked to user accounts.
+- Dashboard with history of recent interview strategies.
+
+### 📄 Job-Tailored Resume PDF Export
+
+- Generates clean, ATS-compliant HTML customized to the specific job.
+- Headless **Puppeteer** converts the HTML into an A4 PDF for one-click download.
+- Pre-configured with sandbox arguments for seamless execution in cloud environments.
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
 
-| Technology   | Version | Purpose                                   |
-| ------------ | ------- | ----------------------------------------- |
-| React        | 19.x    | UI framework                              |
-| Vite         | 8.x     | Build tool & dev server                   |
-| React Router | 8.x     | Client-side routing with protected routes |
-| Axios        | 1.x     | HTTP client                               |
-| SCSS (Sass)  | 1.x     | Component-level styling                   |
+- **Framework:** React 19 + Vite 8
+- **Routing:** React Router v8
+- **Styling:** SCSS (Sass)
+- **HTTP Client:** Axios (dynamic baseURL for local development & production)
+
+### Backend
+
+- **Runtime & Server:** Node.js + Express 5
+- **Database & ODM:** MongoDB Atlas + Mongoose 9
+- **Authentication:** JSON Web Tokens (JWT) + Cookie-Parser + bcryptjs
+- **File Upload & Parsing:** Multer + pdf-parse
+- **AI Integration:** `@google/genai` (Google Gemini 3.1 Flash Lite) + Zod
+- **PDF Generation:** Puppeteer 25
 
 ---
 
-## Features
-
-### Authentication
-
-- **Register** — create a new user account with hashed password storage
-- **Login** — authenticate with email and password; JWT stored in an HTTP-only cookie
-- **Logout** — token is server-side blacklisted (`blacklist.model.js`) to prevent reuse
-- **Protected Routes** — `authMiddleware` on the backend and a `<Protected>` wrapper component on the frontend
-- **Get Current User** — `/api/auth/get-me` returns the authenticated user's profile
-
-### Interview Report Generation
-
-- Upload a **resume PDF** — text is extracted server-side via `pdf-parse`
-- Optionally provide a **self-description** as a supplement or alternative to a PDF
-- Provide the **target job description**
-- Gemini AI analyzes all inputs and returns a structured JSON report validated with Zod
-- Report is **persisted in MongoDB** and linked to the authenticated user
-- **Dashboard (Home page)** lists all past reports for the user (summary view — no large fields)
-- **Report detail page** (`/interview/:interviewId`) shows the full report
-
-### AI-Powered Resume PDF Export
-
-- Triggered via `POST /api/interview/resume/pdf/:interviewReportId`
-- Gemini generates an ATS-friendly, professionally styled HTML resume tailored to the job
-- **Puppeteer** renders the HTML and streams a downloadable **A4 PDF** back to the client
-
----
-
-## Project Structure
+## 📁 Project Architecture
 
 ```
 INTERVIEW-AI/
-├── Backend/
+├── backend/
 │   ├── src/
-│   │   ├── config/                    # Database connection
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.js     # Register, login, logout, get-me
-│   │   │   └── interview.controller.js # Report CRUD + PDF generation
-│   │   ├── middlewares/
-│   │   │   ├── auth.middleware.js     # JWT verification
-│   │   │   └── file.middleware.js     # Multer (PDF upload)
-│   │   ├── models/
-│   │   │   ├── user.model.js
-│   │   │   ├── interviewReport.model.js
-│   │   │   └── blacklist.model.js     # Logout token blacklist
-│   │   ├── routes/
-│   │   │   ├── auth.routes.js
-│   │   │   └── interview.routes.js
-│   │   ├── services/
-│   │   │   └── ai.service.js          # Gemini AI + Puppeteer PDF logic
-│   │   └── app.js
-│   ├── .env
+│   │   ├── config/              # MongoDB connection
+│   │   ├── controllers/         # Auth & interview business logic
+│   │   ├── middlewares/         # JWT verification & Multer file upload
+│   │   ├── models/              # Mongoose schemas (User, Report, Blacklist)
+│   │   ├── routes/              # Express API endpoints
+│   │   ├── services/            # Gemini AI service & Puppeteer PDF generator
+│   │   └── app.js               # Express application & SPA static serving
+│   ├── .puppeteerrc.cjs         # Puppeteer Chrome cache configuration
 │   ├── package.json
-│   └── server.js
-├── Frontend/
+│   └── server.js                # Server entry point
+├── frontend/
 │   ├── src/
 │   │   ├── features/
-│   │   │   ├── auth/
-│   │   │   │   ├── components/        # <Protected> route wrapper
-│   │   │   │   ├── hooks/
-│   │   │   │   ├── pages/
-│   │   │   │   │   ├── Login.jsx
-│   │   │   │   │   └── Register.jsx
-│   │   │   │   └── services/          # Auth API calls
-│   │   │   └── interview/
-│   │   │       ├── hooks/
-│   │   │       ├── pages/
-│   │   │       │   ├── Home.jsx       # Dashboard & report list
-│   │   │       │   └── Interview.jsx  # Full report detail view
-│   │   │       ├── services/          # Interview API calls
-│   │   │       └── style/
+│   │   │   ├── auth/            # Auth context, hooks, login & register pages
+│   │   │   └── interview/       # Interview hooks, context, Home & Report pages
 │   │   ├── App.jsx
-│   │   ├── app.routes.jsx             # React Router config
-│   │   ├── main.jsx
-│   │   └── style.scss
-│   ├── public/
-│   ├── index.html
+│   │   ├── app.routes.jsx       # Route configuration & route guards
+│   │   └── main.jsx
+│   ├── public/                  # Assets and favicon
 │   ├── vite.config.js
 │   └── package.json
+├── .puppeteerrc.cjs             # Root Puppeteer configuration
+├── package.json                 # Monorepo build and start scripts
 └── Readme.MD
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started Locally
 
 ### Prerequisites
 
-- Node.js v18+
-- A running MongoDB instance (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
-- A Google Gemini API key ([Get one here](https://aistudio.google.com/apikey))
+- Node.js (v18 or higher)
+- MongoDB instance (Local or [MongoDB Atlas](https://www.mongodb.com/atlas))
+- Google Gemini API Key ([Get one here](https://aistudio.google.com/apikey))
 
-### Backend Setup
-
-1. Navigate into the `Backend` folder and install dependencies:
+### 1. Clone the Repository
 
 ```bash
-cd Backend
-npm install
+git clone https://github.com/Piyush-Sarkar/Interview-AI.git
+cd Interview-AI
 ```
 
-2. Create a `.env` file inside `Backend/`:
+### 2. Backend Setup
 
-```env
-PORT=3000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
-GOOGLE_GENAI_API_KEY=your_google_gemini_api_key
-```
+1. Navigate to the backend directory and install dependencies:
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Create a `.env` file inside `backend/`:
+   ```env
+   PORT=3000
+   NODE_ENV=development
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   GOOGLE_GENAI_API_KEY=your_gemini_api_key
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-3. Start the development server:
+### 3. Frontend Setup
 
-```bash
-npm run dev
-```
-
-The API runs at `http://localhost:3000`.
+1. In a new terminal, navigate to the frontend directory:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+3. Open `http://localhost:5173` in your browser.
 
 ---
 
-### Frontend Setup
+## 🌐 Deployment (Render)
 
-1. Navigate into the `Frontend` folder and install dependencies:
+This repository is pre-configured to build the frontend and serve both the API and client from a **single Node.js process** in production.
 
-```bash
-cd Frontend
-npm install
-```
+### Root Commands
 
-2. Start the development server:
-
-```bash
-npm run dev
-```
-
-The frontend runs at `http://localhost:5173`.
-
----
-
-## API Reference
-
-### Auth Endpoints
-
-| Method   | Endpoint               | Access  | Description                            |
-| -------- | ---------------------- | ------- | -------------------------------------- |
-| `POST` | `/api/auth/register` | Public  | Register a new user                    |
-| `POST` | `/api/auth/login`    | Public  | Login and receive a JWT cookie         |
-| `GET`  | `/api/auth/logout`   | Public  | Logout and blacklist the current token |
-| `GET`  | `/api/auth/get-me`   | Private | Get the currently authenticated user   |
-
-### Interview Endpoints
-
-| Method   | Endpoint                                         | Access  | Description                                 |
-| -------- | ------------------------------------------------ | ------- | ------------------------------------------- |
-| `POST` | `/api/interview`                               | Private | Generate a new interview report             |
-| `GET`  | `/api/interview`                               | Private | List all reports for the logged-in user     |
-| `GET`  | `/api/interview/report/:interviewId`           | Private | Fetch a specific report by ID               |
-| `POST` | `/api/interview/resume/pdf/:interviewReportId` | Private | Generate and download a tailored resume PDF |
-
-#### `POST /api/interview` — Request Body (`multipart/form-data`)
-
-| Field               | Type       | Required | Description                       |
-| ------------------- | ---------- | -------- | --------------------------------- |
-| `resume`          | File (PDF) | Yes      | The candidate's resume            |
-| `selfDescription` | String     | Optional | Extra context about the candidate |
-| `jobDescription`  | String     | Yes      | The target job description        |
-
-#### Interview Report Schema
-
-```json
-{
-  "title": "string",
-  "matchScore": 0,
-  "technicalQuestions": [
-    { "question": "string", "intention": "string", "answer": "string" }
-  ],
-  "behavioralQuestions": [
-    { "question": "string", "intention": "string", "answer": "string" }
-  ],
-  "skillGaps": [
-    { "skill": "string", "severity": "low | medium | high" }
-  ],
-  "preparationPlan": [
-    { "day": 1, "focus": "string", "tasks": ["string"] }
-  ]
-}
-```
-
-> **AI constraints:** 4–5 technical questions, 2–3 behavioral questions, exactly 7 preparation days.
-
----
-
-## Application Flow
-
-```
-1.  Register / Login
-         ↓
-2.  Dashboard (Home page)
-    - View list of all past interview reports
-         ↓
-3.  Create New Report
-    - Paste the job description
-    - Upload a resume PDF (and/or provide a self-description)
-    - Submit → AI generates and stores the report
-         ↓
-4.  View Report Detail (/interview/:id)
-    - Match score
-    - Technical questions with intentions and answers
-    - Behavioral questions with guidance
-    - Skill gap analysis with severity levels
-    - 7-day preparation plan
-         ↓
-5.  Download Resume PDF (optional)
-    - AI generates a tailored, ATS-friendly HTML resume
-    - Rendered to PDF via Puppeteer and downloaded
-```
-
----
-
-## Development
-
-### Building the Frontend
-
-```bash
-cd Frontend
-npm run build
-```
-
-The production bundle is output to `Frontend/dist/`.
-
-### Linting
-
-```bash
-cd Frontend
-npm run lint
-```
-
-### Previewing the Production Build
-
-```bash
-cd Frontend
-npm run preview
-```
-
----
-
-## Troubleshooting
-
-### MongoDB Connection Issues
-
-- Verify your `MONGO_URI` is correct in `Backend/.env`
-- Ensure your MongoDB server is running locally, or that your Atlas cluster is active
-- If using MongoDB Atlas, whitelist your current IP address under **Network Access**
-- Test the connection string independently with [MongoDB Compass](https://www.mongodb.com/products/compass)
-
-### Google Gemini API Errors
-
-- Confirm `GOOGLE_GENAI_API_KEY` is set correctly in `Backend/.env`
-- Make sure the key has access to the **Gemini** models via [Google AI Studio](https://aistudio.google.com/apikey)
-- If you get a quota or rate-limit error, check your usage limits in the Google Cloud Console
-- The app uses `gemini-3.1-flash-lite` — ensure this model is available on your API key
-
-### PDF Generation Issues (Puppeteer)
-
-- Puppeteer downloads a bundled Chromium on `npm install` — ensure you have enough disk space
-- On Linux/CI environments, you may need to install additional system dependencies:
+- **Build Command:**
   ```bash
-  apt-get install -y libgbm-dev libxshmfence-dev
+  npm run build
   ```
-- If PDF generation hangs, check that `puppeteer.launch()` can open a headless browser in your environment
 
-### Resume Upload Fails
+  *(Installs backend & frontend dependencies, builds the Vite production bundle, and downloads Chrome for Puppeteer)*
+- **Start Command:**
+  ```bash
+  npm start
+  ```
 
-- Only **PDF** files are accepted; verify the file extension and MIME type
-- Check that `multer` is properly configured in `Backend/src/middlewares/file.middleware.js`
-- Ensure the request uses `multipart/form-data` encoding, not `application/json`
+### Render Configuration
 
-### CORS Errors
-
-- Ensure the backend CORS configuration in `Backend/src/app.js` allows requests from `http://localhost:5173`
-- If deploying, update the allowed origin to match your frontend's production URL
-- Clear browser cache and hard-reload after making CORS changes
-
-### Port Already in Use
-
-- Change `PORT` in `Backend/.env` (default: `3000`)
-- Kill the process occupying the port:
-  - **Mac/Linux:** `lsof -ti:3000 | xargs kill -9`
-  - **Windows:** `netstat -ano | findstr :3000` then `taskkill /PID <PID> /F`
-
-### JWT / Authentication Errors
-
-- Verify `JWT_SECRET` is set in `Backend/.env` and matches between restarts
-- Tokens are stored as HTTP-only cookies — ensure your API client includes cookies with requests
-- If a token is blacklisted after logout, you must log in again to get a new one
+1. Create a new **Web Service** on [Render](https://dashboard.render.com).
+2. Connect your GitHub repository.
+3. Configure settings:
+   - **Root Directory:** *(leave blank)*
+   - **Build Command:** `npm run build`
+   - **Start Command:** `npm start`
+4. Add the following **Environment Variables**:
+   - `NODE_ENV` = `production`
+   - `MONGO_URI` = *your MongoDB Atlas connection URI*
+   - `JWT_SECRET` = *your JWT secret key*
+   - `GOOGLE_GENAI_API_KEY` = *your Google Gemini API key*
 
 ---
 
-## Future Enhancements
+## 📡 API Reference
 
-- [ ] Mock interview session with real-time AI feedback
-- [ ] Profile and account management page
-- [ ] Admin dashboard and usage analytics
-- [ ] Richer report UI with charts and progress tracking
-- [ ] Deployment setup (Docker, Vercel, Render)
-- [ ] Email notifications and shareable report links
-- [ ] Support for DOCX and plain-text resume formats
-- [ ] Dark mode UI
-- [ ] Export interview report to PDF
+### Authentication Endpoints
 
----
+| Method   | Endpoint               | Access  | Description                                |
+| -------- | ---------------------- | ------- | ------------------------------------------ |
+| `POST` | `/api/auth/register` | Public  | Register a new user account                |
+| `POST` | `/api/auth/login`    | Public  | Authenticate user & issue HTTP-only cookie |
+| `GET`  | `/api/auth/logout`   | Public  | Blacklist token & clear cookie             |
+| `GET`  | `/api/auth/get-me`   | Private | Fetch authenticated user profile           |
 
-## Contributing
+### Interview & Report Endpoints
 
-Contributions are welcome! Please follow these steps:
-
-1. **Fork** the repository
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/YourFeatureName
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add YourFeatureName'
-   ```
-4. **Push to your branch**
-   ```bash
-   git push origin feature/YourFeatureName
-   ```
-5. **Open a Pull Request** against the `main` branch
-
-Please make sure your code:
-
-- Follows the existing project structure and naming conventions
-- Does not commit `.env` files or secrets
-- Includes relevant comments for non-obvious logic
+| Method   | Endpoint                                         | Access  | Description                                                    |
+| -------- | ------------------------------------------------ | ------- | -------------------------------------------------------------- |
+| `POST` | `/api/interview`                               | Private | Generate structured interview report (`multipart/form-data`) |
+| `GET`  | `/api/interview`                               | Private | Fetch all interview reports for the current user               |
+| `GET`  | `/api/interview/report/:interviewId`           | Private | Fetch full report details by ID                                |
+| `POST` | `/api/interview/resume/pdf/:interviewReportId` | Private | Generate and download tailored ATS resume PDF                  |
 
 ---
 
-## License
+## 🔄 Application Flow
 
-This project is currently open source and available under the **ISC License**.
+```
+1. Register / Login
+        ↓
+2. Home Dashboard
+   - View previously generated interview reports
+   - Upload resume PDF or write self-description
+   - Enter target job description
+        ↓
+3. AI Generation (Gemini 3.1 Flash Lite)
+   - Evaluates profile compatibility & calculates match score
+   - Identifies technical & behavioral questions with intentions
+   - Maps out skill gaps and a 7-day preparation schedule
+        ↓
+4. Report Detail View (/interview/:id)
+   - Full interactive preparation dashboard
+        ↓
+5. AI Resume Download (Optional)
+   - Headless Puppeteer renders job-optimized resume into an A4 PDF
+```
 
 ---
 
-## Support
+## 🤝 Contributing
 
-For support, please open an issue in the repository or contact the development team.
+Contributions are welcome!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **ISC License**.
