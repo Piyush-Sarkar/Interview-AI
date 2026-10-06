@@ -1,6 +1,6 @@
 # Interview-AI
 
-An AI-powered full-stack interview preparation platform that analyzes your resume against a job description and generates a personalized interview strategy — complete with questions, answers, skill gap analysis, and a 7-day preparation plan.
+An AI-powered interview preparation platform built to analyze resumes against job descriptions and provide personalized career guidance. Generate tailored technical and behavioral interview questions, suggested answers, skill-gap analysis, and a structured 7-day preparation plan through an intuitive, responsive full-stack application.An AI-powered full-stack interview preparation platform that analyzes your resume against a job description and generates a personalized interview strategy — complete with questions, answers, skill gap analysis, and a 7-day preparation pla
 
 ## Table of Contents
 
