@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
+import { useAuth } from '../../auth/hooks/useAuth.js'
 import { useNavigate } from 'react-router'
 
 const Home = () => {
     const { loading, generateReport, reports } = useInterview()
+    const { user, handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
     const resumeInputRef = useRef()
@@ -27,6 +29,43 @@ const Home = () => {
 
     return (
         <div className='home-page'>
+
+            {/* Top Navigation */}
+            <nav className='home-navbar'>
+                <div className='brand'>
+                    <span className='brand-icon'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 8V4H8" />
+                            <rect width="16" height="12" x="4" y="8" rx="2" />
+                            <path d="M2 14h2" />
+                            <path d="M20 14h2" />
+                            <path d="M15 13v2" />
+                            <path d="M9 13v2" />
+                        </svg>
+                    </span>
+                    <span className='brand-name'>Interview AI</span>
+                </div>
+                <div className='nav-actions'>
+                    {user ? (
+                        <>
+                            <span className='user-greeting'>Hi, {user.username || user.email}</span>
+                            <button
+                                onClick={async () => {
+                                    await handleLogout()
+                                    navigate('/login')
+                                }}
+                                className='logout-btn'
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <button onClick={() => navigate('/login')} className='logout-btn'>
+                            Login
+                        </button>
+                    )}
+                </div>
+            </nav>
 
             {/* Page Header */}
             <header className='page-header'>
