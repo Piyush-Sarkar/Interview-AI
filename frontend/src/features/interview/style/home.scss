@@ -198,8 +198,8 @@ $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
         }
 
         &--short {
-            flex: unset;
-            height: 96px;
+            flex: 1;
+            min-height: 96px;
         }
     }
 
@@ -258,6 +258,37 @@ $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.upload-status {
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    &--uploaded {
+        color: #3fb950;
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #3fb950;
+            display: inline-block;
+            box-shadow: 0 0 6px rgba(63, 185, 80, 0.6);
+        }
+    }
+
+    &--not-uploaded {
+        color: $text-muted;
+    }
 }
 
 .dropzone {
@@ -266,21 +297,38 @@ $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem;
     background-color: $bg-input;
     border: 2px dashed $border-color;
     border-radius: 0.6rem;
     cursor: pointer;
+    position: relative;
     transition: border-color 0.2s, background-color 0.2s;
 
-    &:hover {
+    &:hover,
+    &--dragging {
         border-color: $accent;
         background-color: rgba($accent, 0.05);
+    }
+
+    &--uploaded {
+        border-style: solid;
+        border-color: rgba(63, 185, 80, 0.35);
+        background-color: rgba(63, 185, 80, 0.04);
+
+        &:hover {
+            border-color: #3fb950;
+            background-color: rgba(63, 185, 80, 0.08);
+        }
     }
 
     &__icon {
         color: $accent;
         margin-bottom: 0.25rem;
+
+        &--uploaded {
+            color: #3fb950;
+        }
     }
 
     &__title {
@@ -290,31 +338,76 @@ $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
         margin: 0;
     }
 
+    &__status-badge {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #3fb950;
+        background-color: rgba(63, 185, 80, 0.15);
+        border: 1px solid rgba(63, 185, 80, 0.3);
+        padding: 0.15rem 0.55rem;
+        border-radius: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0.2rem;
+    }
+
+    &__filename {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $text-primary;
+        margin: 0;
+        max-width: 260px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
     &__subtitle {
         font-size: 0.75rem;
         color: $text-muted;
         margin: 0;
     }
+
+    &__remove-btn {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid $border-color;
+        border-radius: 50%;
+        color: $text-muted;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: rgba(255, 45, 120, 0.2);
+            color: $accent;
+            border-color: $accent;
+        }
+    }
 }
 
-// ── OR Divider ────────────────────────────────────────────────────────────────
+// ── Divider ───────────────────────────────────────────────────────────────────
 .or-divider {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: $text-muted;
-    font-size: 0.75rem;
+    width: 100%;
+    height: 1px;
+    background-color: $border-color;
+    margin: 0.25rem 0;
 
     &::before,
     &::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background-color: $border-color;
+        display: none;
     }
 
     span {
-        white-space: nowrap;
+        display: none;
     }
 }
 
@@ -323,6 +416,7 @@ $font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, s
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex: 1;
 }
 
 // ── Info Box ──────────────────────────────────────────────────────────────────

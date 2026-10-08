@@ -8,7 +8,7 @@
   <a href="https://www.mongodb.com/"><img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb" alt="MongoDB" /></a>
 </p>
 
-An AI-powered full-stack interview preparation platform that analyzes your resume against a target job description to generate a personalized interview strategy—complete with question-answer preparation, intent breakdowns, skill-gap analysis, and a structured 7-day action plan. It also includes an AI-powered resume builder that generates job-tailored, ATS-friendly resume PDFs.
+An AI-powered full-stack interview preparation platform that analyzes your resume and self-description against a target job description to generate a personalized interview strategy—complete with question-answer preparation, intent breakdowns, skill-gap analysis, and a structured 7-day action plan. It also includes an AI-powered resume builder that generates job-tailored, ATS-friendly resume PDFs.
 
 🌐 **Live Demo:** [https://interview-ai-07n8.onrender.com](https://interview-ai-07n8.onrender.com)
 
@@ -34,7 +34,7 @@ An AI-powered full-stack interview preparation platform that analyzes your resum
 
 ## 💡 Overview
 
-Preparing for technical and behavioral interviews can be overwhelming without tailored feedback. **Interview AI** leverages **Google Gemini AI** to bridge the gap between candidate resumes and specific job requirements:
+Preparing for technical and behavioral interviews can be overwhelming without tailored feedback. **Interview AI** leverages **Google Gemini AI** to bridge the gap between candidate qualifications and specific job requirements:
 
 - 🎯 **Match Score:** Calculates a 0–100% compatibility rating between your profile and target job.
 - 💻 **Technical Questions:** Generates 4–5 role-specific questions with interviewer intent and ideal responses.
@@ -54,18 +54,19 @@ Preparing for technical and behavioral interviews can be overwhelming without ta
 - Server-side token blacklisting on logout to prevent replay attacks.
 - Frontend route guards (`<Protected>`) with persistent session restoration.
 
-### 📋 Intelligent Interview Reports
+### 📋 Intelligent Interview Reports & Input Experience
 
-- Resume parsing via `pdf-parse` (supports file upload or quick self-description).
-- Schema-validated output using **Zod** and Google Gen AI SDK.
-- Persistent report storage in MongoDB Atlas linked to user accounts.
-- Dashboard with history of recent interview strategies.
+- **Resume Upload with Live Status:** Interactive dropzone with click-to-upload and native drag-and-drop, real-time status badge (`Not uploaded` vs. glowing `● Uploaded`), file name preview with size indicator, and instant file removal.
+- **Dynamic Character Limiter:** Target job description input tracks character count live with strict 5,000-character enforcement.
+- **Combined Context Analysis:** Integrates both uploaded resumes (parsed via `pdf-parse`) and user self-descriptions to build a rich candidate profile.
+- **Schema-Validated AI Responses:** Structured output guarantee via **Zod** and Google Gen AI SDK.
+- **History Dashboard:** Instant access to previously generated interview strategies stored in MongoDB Atlas.
 
 ### 📄 Job-Tailored Resume PDF Export
 
-- Generates clean, ATS-compliant HTML customized to the specific job.
-- Headless **Puppeteer** converts the HTML into an A4 PDF for one-click download.
-- Pre-configured with sandbox arguments for seamless execution in cloud environments.
+- **Custom-Tailored Content:** Prompts Gemini to tailor resume sections specifically around the target job description while maintaining human-like, ATS-friendly phrasing.
+- **Multi-Tier Browser Launch:** Pre-configured headless **Puppeteer** engine with automatic fallbacks (system Google Chrome, bundled Chromium, and Microsoft Edge) with sandbox arguments for bulletproof execution across Windows, macOS, and Linux cloud environments.
+- **ATS-Optimized Formatting:** Converts semantic, structured HTML into a print-ready A4 PDF with standardized margins and keyword alignment designed to pass Applicant Tracking Systems without layout distortion.
 
 ---
 
@@ -84,8 +85,8 @@ Preparing for technical and behavioral interviews can be overwhelming without ta
 - **Database & ODM:** MongoDB Atlas + Mongoose 9
 - **Authentication:** JSON Web Tokens (JWT) + Cookie-Parser + bcryptjs
 - **File Upload & Parsing:** Multer + pdf-parse
-- **AI Integration:** `@google/genai` (Google Gemini 3.1 Flash Lite) + Zod
-- **PDF Generation:** Puppeteer 25
+- **AI Integration:** `@google/genai` (Google Gemini 3.5 Flash Lite — `gemini-3.5-flash-lite`) + Zod
+- **PDF Generation:** Puppeteer 25 (with Chrome & Edge channel fallbacks)
 
 ---
 
@@ -110,9 +111,11 @@ INTERVIEW-AI/
 │   │   ├── features/
 │   │   │   ├── auth/            # Auth context, hooks, login & register pages
 │   │   │   └── interview/       # Interview hooks, context, Home & Report pages
+│   │   ├── style/               # Button and design system styles
 │   │   ├── App.jsx
 │   │   ├── app.routes.jsx       # Route configuration & route guards
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── style.scss           # Global styles and animated loading keyframes
 │   ├── public/                  # Assets and favicon
 │   ├── vite.config.js
 │   └── package.json
@@ -130,6 +133,7 @@ INTERVIEW-AI/
 - Node.js (v18 or higher)
 - MongoDB instance (Local or [MongoDB Atlas](https://www.mongodb.com/atlas))
 - Google Gemini API Key ([Get one here](https://aistudio.google.com/apikey))
+- Google Chrome or Microsoft Edge installed on your system (or run `npx puppeteer browsers install chrome`)
 
 ### 1. Clone the Repository
 
@@ -180,12 +184,14 @@ This repository is pre-configured to build the frontend and serve both the API a
 ### Root Commands
 
 - **Build Command:**
+
   ```bash
   npm run build
   ```
 
   *(Installs backend & frontend dependencies, builds the Vite production bundle, and downloads Chrome for Puppeteer)*
 - **Start Command:**
+
   ```bash
   npm start
   ```
@@ -235,19 +241,23 @@ This repository is pre-configured to build the frontend and serve both the API a
         ↓
 2. Home Dashboard
    - View previously generated interview reports
-   - Upload resume PDF or write self-description
-   - Enter target job description
+   - Upload resume PDF (with live status feedback & drag-and-drop)
+   - Add self-description & enter target job description (live 5k character counter)
         ↓
-3. AI Generation (Gemini 3.1 Flash Lite)
+3. AI Strategy Generation
+   - Full-page wave animated loading screen ("Loading your interview plan.....")
    - Evaluates profile compatibility & calculates match score
-   - Identifies technical & behavioral questions with intentions
+   - Identifies technical & behavioral questions with intentions & model answers
    - Maps out skill gaps and a 7-day preparation schedule
         ↓
 4. Report Detail View (/interview/:id)
-   - Full interactive preparation dashboard
+   - Interactive preparation tabs (Technical, Behavioral, Roadmap)
+   - Sidebar with Match Score and severity-coded skill gaps
         ↓
-5. AI Resume Download (Optional)
+5. AI Resume Download
+   - Full-page wave animated loading screen ("Downloading your resume.....")
    - Headless Puppeteer renders job-optimized resume into an A4 PDF
+   - Download is verified before cleanly returning user to the report dashboard
 ```
 
 ---

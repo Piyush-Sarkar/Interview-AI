@@ -44,7 +44,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         IMPORTANT: You MUST generate between 4 and 5 technical questions (no fewer than 4, no more than 5) and between 2 and 3 behavioral questions (no fewer than 2, no more than 3).`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-3.5-flash-lite",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -63,20 +63,38 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const launchOptions = {
-        headless: "new",
-        args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-gpu",
-            "--no-first-run",
-            "--no-zygote",
-            "--single-process"
-        ]
+    const defaultArgs = [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process"
+    ]
+
+    let browser
+    try {
+        browser = await puppeteer.launch({
+            channel: "chrome",
+            headless: "new",
+            args: defaultArgs
+        })
+    } catch (err) {
+        try {
+            browser = await puppeteer.launch({
+                headless: "new",
+                args: defaultArgs
+            })
+        } catch (fallbackErr) {
+            browser = await puppeteer.launch({
+                channel: "msedge",
+                headless: "new",
+                args: defaultArgs
+            })
+        }
     }
 
-    const browser = await puppeteer.launch(launchOptions)
     try {
         const page = await browser.newPage()
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
@@ -120,7 +138,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                     `
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.1-flash-lite",
+        model: "gemini-3.5-flash-lite",
         contents: prompt,
         config: {
             responseMimeType: "application/json",

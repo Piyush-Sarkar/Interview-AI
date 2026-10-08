@@ -9,12 +9,14 @@ const Home = () => {
     const { user, handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ selectedFile, setSelectedFile ] = useState(null)
+    const [ isDragging, setIsDragging ] = useState(false)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
     
     const handleGenerateReport = async () => {
-        const resumeFile = resumeInputRef.current.files[0]
+        const resumeFile = selectedFile || resumeInputRef.current?.files?.[0]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         navigate(`/interview/${data._id}`)
     }
@@ -22,7 +24,14 @@ const Home = () => {
     if (loading) {
         return (
             <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
+                <h1 className='loading-text'>
+                    Loading your interview plan
+                    <span className='dot'>.</span>
+                    <span className='dot'>.</span>
+                    <span className='dot'>.</span>
+                    <span className='dot'>.</span>
+                    <span className='dot'>.</span>
+                </h1>
             </main>
         )
     }
@@ -87,12 +96,13 @@ const Home = () => {
                             <span className='badge badge--required'>Required</span>
                         </div>
                         <textarea
-                            onChange={(e) => { setJobDescription(e.target.value) }}
+                            value={jobDescription}
+                            onChange={(e) => { setJobDescription(e.target.value.slice(0, 5000)) }}
                             className='panel__textarea'
                             placeholder={`Paste the full job description here...\ne.g. 'Senior Frontend Engineer at Google requires proficiency in React, TypeScript, and large-scale system design...'`}
                             maxLength={5000}
                         />
-                        <div className='char-counter'>0 / 5000 chars</div>
+                        <div className='char-counter'>{jobDescription.length} / 5000 chars</div>
                     </div>
 
                     {/* Vertical Divider */}
@@ -109,22 +119,94 @@ const Home = () => {
 
                         {/* Upload Resume */}
                         <div className='upload-section'>
-                            <label className='section-label'>
-                                Upload Resume
-                                <span className='badge badge--best'>Best Results</span>
-                            </label>
-                            <label className='dropzone' htmlFor='resume'>
-                                <span className='dropzone__icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                            <div className='upload-section__header'>
+                                <label className='section-label'>
+                                    Upload Resume
+                                    <span className='badge badge--best'>Best Results</span>
+                                </label>
+                                <span className={`upload-status ${selectedFile ? 'upload-status--uploaded' : 'upload-status--not-uploaded'}`}>
+                                    {selectedFile ? (
+                                        <>
+                                            <span className='status-dot' /> Uploaded
+                                        </>
+                                    ) : (
+                                        'Not uploaded'
+                                    )}
                                 </span>
-                                <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                            </div>
+                            <label
+                                className={`dropzone ${selectedFile ? 'dropzone--uploaded' : ''} ${isDragging ? 'dropzone--dragging' : ''}`}
+                                htmlFor='resume'
+                                onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+                                onDragLeave={(e) => { e.preventDefault(); setIsDragging(false) }}
+                                onDrop={(e) => {
+                                    e.preventDefault()
+                                    setIsDragging(false)
+                                    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                                        const file = e.dataTransfer.files[0]
+                                        setSelectedFile(file)
+                                        if (resumeInputRef.current) {
+                                            const dataTransfer = new DataTransfer()
+                                            dataTransfer.items.add(file)
+                                            resumeInputRef.current.files = dataTransfer.files
+                                        }
+                                    }
+                                }}
+                            >
+                                {selectedFile ? (
+                                    <>
+                                        <button
+                                            type='button'
+                                            className='dropzone__remove-btn'
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                e.preventDefault()
+                                                setSelectedFile(null)
+                                                if (resumeInputRef.current) {
+                                                    resumeInputRef.current.value = ''
+                                                }
+                                            }}
+                                            title='Remove file'
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                        </button>
+                                        <span className='dropzone__icon dropzone__icon--uploaded'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><polyline points="9 15 12 18 15 15"></polyline></svg>
+                                        </span>
+                                        <div className='dropzone__status-badge'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            File Uploaded
+                                        </div>
+                                        <p className='dropzone__filename' title={selectedFile.name}>{selectedFile.name}</p>
+                                        <p className='dropzone__subtitle'>{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB &bull; Click to replace</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className='dropzone__icon'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                                        </span>
+                                        <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
+                                        <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
+                                    </>
+                                )}
+                                <input
+                                    ref={resumeInputRef}
+                                    hidden
+                                    type='file'
+                                    id='resume'
+                                    name='resume'
+                                    accept='.pdf,.docx'
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            setSelectedFile(e.target.files[0])
+                                        }
+                                    }}
+                                />
                             </label>
                         </div>
 
-                        {/* OR Divider */}
-                        <div className='or-divider'><span>OR</span></div>
+                        {/* Divider */}
+                        <div className='or-divider' />
 
                         {/* Quick Self-Description */}
                         <div className='self-description'>
@@ -134,7 +216,7 @@ const Home = () => {
                                 id='selfDescription'
                                 name='selfDescription'
                                 className='panel__textarea panel__textarea--short'
-                                placeholder="Briefly describe your experience, key skills, and years of experience if you don't have a resume handy..."
+                                placeholder="Briefly describe your experience, key skills, and years of experience..."
                             />
                         </div>
 
@@ -143,7 +225,7 @@ const Home = () => {
                             <span className='info-box__icon'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" stroke="#1a1f27" strokeWidth="2" /><line x1="12" y1="16" x2="12.01" y2="16" stroke="#1a1f27" strokeWidth="2" /></svg>
                             </span>
-                            <p>Either a <strong>Resume</strong> or a <strong>Self Description</strong> is required to generate a personalized plan.</p>
+                            <p>Both a <strong>Resume</strong> and a <strong>Self Description</strong> are required to generate a personalized plan.</p>
                         </div>
                     </div>
                 </div>
