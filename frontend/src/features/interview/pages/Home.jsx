@@ -25,7 +25,7 @@ const Home = () => {
         return (
             <main className='loading-screen'>
                 <h1 className='loading-text'>
-                    Loading your interview plan
+                    Loading
                     <span className='dot'>.</span>
                     <span className='dot'>.</span>
                     <span className='dot'>.</span>
