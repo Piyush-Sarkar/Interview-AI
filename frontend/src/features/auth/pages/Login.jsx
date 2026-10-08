@@ -6,30 +6,29 @@ import { useAuth } from "../hooks/useAuth"
 
 const Login = () => {
 
-    const {loading, handleLogin} = useAuth()
+    const { user, handleLogin } = useAuth()
     const navigate = useNavigate()
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [ email, setEmail ] = useState("")
+    const [ password, setPassword ] = useState("")
+    const [ isSubmitting, setIsSubmitting ] = useState(false)
+
+    React.useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [ user, navigate ])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleLogin({email, password})
-        navigate("/")
-    }
-
-    if(loading) {
-        return (
-            <main>
-                <h1 className="loading-text">
-                    Loading
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                </h1>
-            </main>
-        )
+        setIsSubmitting(true)
+        try {
+            const data = await handleLogin({ email, password })
+            if (data?.user) {
+                navigate("/")
+            }
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -51,7 +50,9 @@ const Login = () => {
                             type="password" id="password" name="password" placeholder="Enter password"/>
                     </div>
 
-                    <button className="button primary-button">Login</button>
+                    <button disabled={isSubmitting} className="button primary-button">
+                        {isSubmitting ? "Logging in..." : "Login"}
+                    </button>
 
                 </form>
 

@@ -9,27 +9,26 @@ const Register = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const {loading, handleRegister} = useAuth()
+    const { user, handleRegister } = useAuth()
+    const [ isSubmitting, setIsSubmitting ] = useState(false)
+
+    React.useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [ user, navigate ])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await handleRegister({username, email, password})
-        navigate("/")
-    }
-
-    if(loading) {
-        return (
-            <main>
-                <h1 className="loading-text">
-                    Loading
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                    <span className="dot">.</span>
-                </h1>
-            </main>
-        )
+        setIsSubmitting(true)
+        try {
+            const data = await handleRegister({username, email, password})
+            if (data?.user) {
+                navigate("/")
+            }
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -59,7 +58,9 @@ const Register = () => {
                 type="password" id="password"          name="password" placeholder="Enter password"
               />
             </div>
-            <button className="button primary-button">Register</button>
+            <button disabled={isSubmitting} className="button primary-button">
+              {isSubmitting ? "Registering..." : "Register"}
+            </button>
           </form>
 
           <p>Already have an Account? <Link to={"/login"} >Login</Link></p>

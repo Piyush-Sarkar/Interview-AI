@@ -11,17 +11,25 @@ const Home = () => {
     const [ selfDescription, setSelfDescription ] = useState("")
     const [ selectedFile, setSelectedFile ] = useState(null)
     const [ isDragging, setIsDragging ] = useState(false)
+    const [ isGenerating, setIsGenerating ] = useState(false)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
     
     const handleGenerateReport = async () => {
-        const resumeFile = selectedFile || resumeInputRef.current?.files?.[0]
-        const data = await generateReport({ jobDescription, selfDescription, resumeFile })
-        navigate(`/interview/${data._id}`)
+        setIsGenerating(true)
+        try {
+            const resumeFile = selectedFile || resumeInputRef.current?.files?.[0]
+            const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+            if (data?._id) {
+                navigate(`/interview/${data._id}`)
+            }
+        } finally {
+            setIsGenerating(false)
+        }
     }
 
-    if (loading) {
+    if (isGenerating) {
         return (
             <main className='loading-screen'>
                 <h1 className='loading-text'>
