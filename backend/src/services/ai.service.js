@@ -97,7 +97,10 @@ async function generatePdfFromHtml(htmlContent) {
 
     try {
         const page = await browser.newPage()
-        await page.setContent(htmlContent, { waitUntil: 'networkidle0' })
+        await page.setContent(htmlContent, { 
+            waitUntil: 'domcontentloaded',
+            timeout: 15000 
+        })
 
         const pdfBuffer = await page.pdf({
             format: 'A4', margin: {
@@ -134,6 +137,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                         you can highlight the content using some colors or different font styles but the overall design should be simple and professional.
                         The content should be ATS friendly, i.e. it should be easily parsable by ATS systems without losing important information.
                         The resume should not be so lengthy, it should ideally be 1-2 pages long when converted to PDF. Focus on quality rather than quantity and make sure to include all the relevant information that can increase the candidate's chances of getting an interview call for the given job description.
+                        All CSS styling MUST be self-contained within an internal <style> tag. Do not include external remote scripts or external CDN links.
 
                     `
 
