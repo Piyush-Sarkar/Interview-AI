@@ -85,7 +85,7 @@ Preparing for technical and behavioral interviews can be overwhelming without ta
 - **Database & ODM:** MongoDB Atlas + Mongoose 9
 - **Authentication:** JSON Web Tokens (JWT) + Cookie-Parser + bcryptjs
 - **File Upload & Parsing:** Multer + pdf-parse
-- **AI Integration:** `@google/genai` (Google Gemini 3.6 Flash — `gemini-3.6-flash`) + Zod
+- **AI Integration:** `@google/genai` (Google Gemini 3.5 Flash Lite — `gemini-3.5-flash-lite`) + Zod
 - **PDF Generation:** Puppeteer 25 (with Chrome & Edge channel fallbacks)
 
 ---

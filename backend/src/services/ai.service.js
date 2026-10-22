@@ -44,7 +44,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
                         IMPORTANT: You MUST generate between 4 and 5 technical questions (no fewer than 4, no more than 5) and between 2 and 3 behavioral questions (no fewer than 2, no more than 3).`;
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-3.5-flash-lite",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -138,7 +138,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                     `
 
     const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-3.5-flash-lite",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
